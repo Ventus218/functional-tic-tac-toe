@@ -12,6 +12,8 @@ object Grid:
     def place(pos: Position, player: Player): Grid =
       grid.+((pos, Option(player)))
 
+    def cells: Map[Position, Option[Player]] = grid
+
     def emptyPositions: Set[Position] =
       grid.filter(_._2.isEmpty).keySet
 

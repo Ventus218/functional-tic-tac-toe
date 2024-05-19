@@ -1,5 +1,15 @@
-@main def hello(): Unit =
-  println("Hello world!")
-  println(msg)
+import Game.*
+import Grid.*
 
-def msg = "I was compiled by Scala 3. :)"
+@main
+def randomGame(): Unit =
+  val game = Game(Player.X)
+  play(game).drawGame()
+
+def play(game: Game): Game = game match
+  case Game(_, _, moves) if moves.isEmpty => game
+  case Game(grid, player, moves) =>
+    game.drawGame()
+    play(game.makeMove(moves.toSeq(0)))
+
+
