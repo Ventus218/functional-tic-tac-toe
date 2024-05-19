@@ -1,10 +1,11 @@
 import Grid.*
 
-case class Game(
-    grid: Grid,
-    nextPlayer: Option[Player],
-    availableMoves: Set[(HorizontalPosition, VerticalPosition)]
-)
+object Game:
+  case class Game(
+      grid: Grid,
+      nextPlayer: Option[Player],
+      availableMoves: Set[Position]
+  )
 
 extension (game: Game)
   def makeMove(move: (HorizontalPosition, VerticalPosition)): Game =
