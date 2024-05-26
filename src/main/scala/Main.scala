@@ -1,15 +1,18 @@
 import Game.*
+import GameIO.*
 import Grid.*
 
 @main
 def randomGame(): Unit =
   val game = Game(Player.X)
-  play(game).drawGame()
+  play(GameIO(game))
 
-def play(game: Game): Game = game match
-  case Game(_, _, moves) if moves.isEmpty => game
-  case Game(grid, player, moves) =>
-    game.drawGame()
-    play(game.makeMove(moves.toSeq(0)))
-
+def play(gameIO: GameIO[Game]): GameIO[Game] =
+  for
+    game <- gameIO
+    _ <- printGame(game)
+    _ <- print("Available moves:")
+    move <- inputMove(game)
+    newGame <- GameIO(game.makeMove(move)) // TODO: is this ok?
+  yield newGame
 
