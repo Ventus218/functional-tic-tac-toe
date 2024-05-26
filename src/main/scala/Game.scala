@@ -35,12 +35,17 @@ object Game:
     def tableAsString: String =
       import HorizontalPosition.{Center as HCenter, *}
       import VerticalPosition.{Center as VCenter, *}
-      var output = ""
-      for x <- Seq(Left, HCenter, Right)
-      do
-        for y <- Seq(Top, VCenter, Bottom)
-        do
-          output =
-            output + game.grid.cells((x, y)).map(_.toString()).getOrElse("_")
-        output = output + "\n"
-      output
+
+      val positions = for
+        x <- Seq(Left, HCenter, Right)
+        y <- Seq(Top, VCenter, Bottom)
+      yield (x, y)
+
+      positions
+        .grouped(3)
+        .map(row =>
+          row
+            .map(pos => game.grid.cells(pos).map(_.toString()).getOrElse("_"))
+            .mkString
+        )
+        .mkString("\n")
