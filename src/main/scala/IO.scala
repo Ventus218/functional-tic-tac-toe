@@ -9,14 +9,6 @@ object IO:
 
   def in(suggestion: String = ""): IO[String] = IO(readLine(suggestion))
 
-  def inputMove(game: Game): IO[Position] =
-    val availableMoves = game.availableMoves.toSeq
-    availableMoves.zipWithIndex
-      .foreach((pos, i) => println(s"${i + 1} -> x: ${pos._1} y:${pos._2}"))
-    val moveIndex = readLine("Choose your move: ")
-    val i = moveIndex.toInt - 1 // TODO: how to handle errors here?
-    IO(availableMoves(i))
-
   def apply[T](content: T): IO[T] = IOImpl(content)
 
   extension [A](io: IO[A])
