@@ -1,28 +1,28 @@
 import Game.*
-import GameIO.*
+import IO.*
 import Grid.*
 
 @main
 def randomGame(): Unit =
   for
     finishedGame <- play(Game(Player.X))
-    _ <- printMessage("\n\nGame finished!!\n")
-    _ <- printMessage(finishedGame.tableAsString)
+    _ <- out("\n\nGame finished!!\n")
+    _ <- out(finishedGame.tableAsString)
   yield {}
 
-def play(g: Game): GameIO[Game] =
+def play(g: Game): IO[Game] =
   g.nextPlayer match
-    case None => GameIO(g)
+    case None => IO(g)
     case Some(player) =>
       for
-        game <- GameIO(g)
-        _ <- printMessage("\n-------------\n")
-        _ <- printMessage(s"Turn: $player\n")
-        _ <- printMessage(game.tableAsString)
-        _ <- printMessage("\nAvailable moves:")
+        game <- IO(g)
+        _ <- out("\n-------------\n")
+        _ <- out(s"Turn: $player\n")
+        _ <- out(game.tableAsString)
+        _ <- out("\nAvailable moves:")
         move <- inputMove(game)
-        newGame <- GameIO(game.makeMove(move)) // TODO: is this ok?
+        newGame <- IO(game.makeMove(move)) // TODO: is this ok?
         res <-
-          if (newGame.availableMoves.isEmpty) then GameIO(newGame)
+          if (newGame.availableMoves.isEmpty) then IO(newGame)
           else play(newGame)
       yield res
