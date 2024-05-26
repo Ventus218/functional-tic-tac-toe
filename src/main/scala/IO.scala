@@ -7,7 +7,7 @@ object IO:
 
   def out(message: String): IO[Unit] = IO(println(message))
 
-  def in(message: String = ""): IO[String] = IO(readLine(message))
+  def in(suggestion: String = ""): IO[String] = IO(readLine(suggestion))
 
   def inputMove(game: Game): IO[Position] =
     val availableMoves = game.availableMoves.toSeq
@@ -19,6 +19,6 @@ object IO:
 
   def apply[T](content: T): IO[T] = IOImpl(content)
 
-  extension [A](gameIO: IO[A])
-    def map[B](f: A => B): IO[B] = IO(f(gameIO.content))
-    def flatMap[B](f: A => IO[B]): IO[B] = f(gameIO.content)
+  extension [A](io: IO[A])
+    def map[B](f: A => B): IO[B] = IO(f(io.content))
+    def flatMap[B](f: A => IO[B]): IO[B] = f(io.content)
