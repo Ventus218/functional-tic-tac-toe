@@ -1,12 +1,18 @@
 import Grid.*
 
+trait GameTrait {
+  val grid: Grid
+  val nextPlayer: Option[Player]
+  val availableMoves: Set[Position]
+}
+
 object Game:
-  opaque type Game = GameImpl
+  opaque type Game <: GameTrait = GameImpl
   case class GameImpl(
       grid: Grid,
       nextPlayer: Option[Player],
       availableMoves: Set[Position]
-  )
+  ) extends GameTrait
 
   def apply(firstPlayer: Player): Game =
     val grid = Grid()
@@ -25,18 +31,3 @@ object Game:
         else game.nextPlayer.map(_.other),
         game.availableMoves - move
       )
-    def availableMoves: Set[Position] = game.availableMoves
-
-    def drawGame(): Unit =
-      println("-------------")
-      game.nextPlayer match
-        case None         => println("Game finished!\n")
-        case Some(player) => println(s"Turn: $player\n")
-
-      import HorizontalPosition.{Center as HCenter, *}
-      import VerticalPosition.{Center as VCenter, *}
-      for x <- Seq(Left, HCenter, Right)
-      do
-        for y <- Seq(Top, VCenter, Bottom)
-        do print(game.grid.cells((x, y)).map(_.toString()).getOrElse("_"))
-        println()

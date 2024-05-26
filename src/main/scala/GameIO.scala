@@ -7,18 +7,24 @@ object GameIO:
 
   def apply(game: Game): GameIO[Game] = GameIOImpl(game)
 
-  def print(message: String): GameIO[Unit] =
+  def printMessage(message: String): GameIO[Unit] =
     println(message)
     GameIOImpl({})
 
   def printGame(game: Game): GameIO[Unit] =
-    game.drawGame()
+    import HorizontalPosition.{Center as HCenter, *}
+    import VerticalPosition.{Center as VCenter, *}
+    for x <- Seq(Left, HCenter, Right)
+    do
+      for y <- Seq(Top, VCenter, Bottom)
+      do print(game.grid.cells((x, y)).map(_.toString()).getOrElse("_"))
+      println()
     GameIOImpl({})
 
   def inputMove(game: Game): GameIO[Position] =
     val availableMoves = game.availableMoves.toSeq
     availableMoves.zipWithIndex
-    .foreach((pos, i) => println(s"${i + 1} -> x: ${pos._1} y:${pos._2}"))
+      .foreach((pos, i) => println(s"${i + 1} -> x: ${pos._1} y:${pos._2}"))
     val moveIndex = readLine("Choose your move: ")
     val i = moveIndex.toInt - 1 // TODO: how to handle errors here?
     GameIOImpl(availableMoves(i))
