@@ -11,16 +11,6 @@ object GameIO:
     println(message)
     GameIOImpl({})
 
-  def printGame(game: Game): GameIO[Unit] =
-    import HorizontalPosition.{Center as HCenter, *}
-    import VerticalPosition.{Center as VCenter, *}
-    for x <- Seq(Left, HCenter, Right)
-    do
-      for y <- Seq(Top, VCenter, Bottom)
-      do print(game.grid.cells((x, y)).map(_.toString()).getOrElse("_"))
-      println()
-    GameIOImpl({})
-
   def inputMove(game: Game): GameIO[Position] =
     val availableMoves = game.availableMoves.toSeq
     availableMoves.zipWithIndex
