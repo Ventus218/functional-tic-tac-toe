@@ -5,14 +5,15 @@ import Grid.*
 @main
 def randomGame(): Unit =
   for
-    finishedGame <- play(Game(Player.X))
-    _ <- out("\n\nGame finished!!\n")
+    (finishedGame, winner) <- play(Game(Player.X))
+    _ <- out("\n\nGame finished!!")
+    _ <- out(s"Winner: ${winner.map(_.toString()).getOrElse("None")}\n")
     _ <- out(finishedGame.tableAsString)
   yield {}
 
-def play(g: Game): IO[Game] =
+def play(g: Game): IO[(Game, Option[Player])] =
   g.nextPlayer match
-    case None => IO(g)
+    case None => IO(g, Option.empty)
     case Some(player) =>
       for
         game <- IO(g)
@@ -29,7 +30,8 @@ def play(g: Game): IO[Game] =
         moveInput <- in("Choose your move: ")
         moveIndex = moveInput.toInt - 1 // TODO: how to handle validation errors
         (newGame, winner) = game.makeMove(availableMoves(moveIndex))
-        res <- if (newGame.isFinished) then IO(newGame) else play(newGame)
+        res <-
+          if (newGame.isFinished) then IO(newGame, winner) else play(newGame)
       yield res
 
 given Ordering[Position] with
