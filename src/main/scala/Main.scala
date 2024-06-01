@@ -28,8 +28,6 @@ def play(g: Game): IO[Game] =
         )
         moveInput <- in("Choose your move: ")
         moveIndex = moveInput.toInt - 1 // TODO: how to handle validation errors
-        newGame = game.makeMove(availableMoves(moveIndex)) // TODO: is it ok to wrap into IO?
-        res <-
-          if (newGame.availableMoves.isEmpty) then IO(newGame)
-          else play(newGame)
+        (newGame, winner) = game.makeMove(availableMoves(moveIndex))
+        res <- if (newGame.isFinished) then IO(newGame) else play(newGame)
       yield res
