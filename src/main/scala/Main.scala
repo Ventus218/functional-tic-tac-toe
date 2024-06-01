@@ -20,7 +20,7 @@ def play(g: Game): IO[Game] =
         _ <- out(s"Turn: $player\n")
         _ <- out(game.tableAsString)
         _ <- out("\nAvailable moves:")
-        availableMoves = game.availableMoves.toSeq // TODO: is this ok?
+        availableMoves = game.availableMoves.toSeq
         _ <- out(
           availableMoves.zipWithIndex
             .map((pos, i) => s"${i + 1} -> ${pos._1}-${pos._2}")
@@ -28,7 +28,7 @@ def play(g: Game): IO[Game] =
         )
         moveInput <- in("Choose your move: ")
         moveIndex = moveInput.toInt - 1 // TODO: how to handle validation errors
-        newGame <- IO(game.makeMove(availableMoves(moveIndex))) // TODO: is it ok to wrap into IO?
+        newGame = game.makeMove(availableMoves(moveIndex)) // TODO: is it ok to wrap into IO?
         res <-
           if (newGame.availableMoves.isEmpty) then IO(newGame)
           else play(newGame)

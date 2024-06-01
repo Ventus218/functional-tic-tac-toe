@@ -37,8 +37,8 @@ object Game:
       import VerticalPosition.{Center as VCenter, *}
 
       val positions = for
-        x <- Seq(Left, HCenter, Right)
         y <- Seq(Top, VCenter, Bottom)
+        x <- Seq(Left, HCenter, Right)
       yield (x, y)
 
       positions
