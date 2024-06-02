@@ -10,6 +10,7 @@ trait GameTrait {
 
 object Game:
   opaque type Game <: GameTrait = GameImpl
+  opaque type Winner <: Player = Player
   case class GameImpl(
       grid: Grid,
       nextPlayer: Option[Player],
@@ -24,7 +25,7 @@ object Game:
     Some(game.grid, game.nextPlayer, game.availableMoves)
 
   extension (game: Game)
-    def makeMove(move: Position): (Game, Option[Player]) = game match
+    def makeMove(move: Position): (Game, Option[Winner]) = game match
       case Game(grid, Some(nextPlayer), availableMoves)
           if !availableMoves.isEmpty =>
         val newGrid = grid.place(move, nextPlayer)
@@ -58,7 +59,7 @@ object Game:
         .mkString("\n")
 
   extension (grid: Grid)
-    private def winner: Option[Player] =
+    private def winner: Option[Winner] =
       Player.values.find(player =>
         val marks = grid.cells.collect { case (pos, Some(`player`)) =>
           pos
