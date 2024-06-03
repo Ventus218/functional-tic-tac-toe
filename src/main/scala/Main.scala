@@ -11,20 +11,17 @@ def randomGame(): Unit =
     _ <- out(finishedGame.tableAsString)
   yield {}
 
-def play(game: Game): IO[(Game, Option[Player])] =
+def play(game: Game): IO[(Game, Option[Winner])] =
   game.nextPlayer match
-    case None => IO(game, Option.empty)
+    case None => IO(game, game.winnerOption)
     case Some(player) =>
       for
-        game <- IO(g)
         _ <- out("\n-------------\n")
         _ <- out(s"Turn: $player\n")
         _ <- out(game.tableAsString)
         move <- inputMove(game)
-        (newGame, winner) = game.makeMove(move)
-        res <- newGame.isFinished match
-          case true  => IO(newGame, winner)
-          case false => play(newGame)
+        (newGame, _) = game.makeMove(move)
+        res <- play(newGame)
       yield res
 
 def inputMove(game: Game): IO[Position] =
