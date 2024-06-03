@@ -20,19 +20,32 @@ def play(g: Game): IO[(Game, Option[Player])] =
         _ <- out("\n-------------\n")
         _ <- out(s"Turn: $player\n")
         _ <- out(game.tableAsString)
-        _ <- out("\nAvailable moves:")
-        availableMoves = game.availableMoves.toSeq.sorted
-        _ <- out(
-          availableMoves.zipWithIndex
-            .map((pos, i) => s"${i + 1} -> ${pos._1}-${pos._2}")
-            .mkString("\n")
-        )
-        moveInput <- in("Choose your move: ")
-        moveIndex = moveInput.toInt - 1 // TODO: how to handle validation errors
-        (newGame, winner) = game.makeMove(availableMoves(moveIndex))
+        move <- inputMove(game)
+        (newGame, winner) = game.makeMove(move)
         res <-
           if (newGame.isFinished) then IO(newGame, winner) else play(newGame)
       yield res
+
+def inputMove(game: Game): IO[Position] =
+  for
+    _ <- out("\nAvailable moves:")
+    availableMoves = game.availableMoves.toSeq.sorted
+    _ <- out(
+      availableMoves.zipWithIndex
+        .map((pos, i) => s"${i + 1} -> ${pos._1}-${pos._2}")
+        .mkString("\n")
+    )
+    moveInput <- in("Choose your move: ")
+    moveInputOption = moveInput.toIntOption
+    validatedInput <- moveInputOption
+      .filter(i => i > 0 && i <= availableMoves.size)
+      .map(i => IO(availableMoves(i - 1)))
+      .getOrElse:
+        for
+          _ <- out("Bad input, try again...")
+          move <- inputMove(game)
+        yield move
+  yield validatedInput
 
 given Ordering[Position] with
   override def compare(x: Position, y: Position): Int =
