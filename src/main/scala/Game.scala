@@ -58,6 +58,8 @@ object Game:
         .map(_.mkString)
         .mkString("\n")
 
+    def winnerOption: Option[Winner] = game.grid.winner
+
   extension (grid: Grid)
     private def winner: Option[Winner] =
       Player.values.find(player =>
