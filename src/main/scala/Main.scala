@@ -3,7 +3,7 @@ import IO.*
 import Grid.*
 
 @main
-def randomGame(): Unit =
+def playOneVsOne(): Unit =
   for
     (finishedGame, winner) <- play(Game(Player.X))
     _ <- out("\n\nGame finished!!")
@@ -41,8 +41,8 @@ def inputMove(game: Game): IO[Position] =
       .getOrElse:
         for
           _ <- out:
-            // move up one line, clear whole line
-            Seq.fill(availableMoves.size + 3)(s"\u001b[1A\u001b[2K").mkString
+            val ansiCleanPreviousLine: String = "\u001b[1A\u001b[2K"
+            Seq.fill(availableMoves.size + 3)(ansiCleanPreviousLine).mkString
           _ <- out("Bad input, try again...")
           move <- inputMove(game)
         yield move
