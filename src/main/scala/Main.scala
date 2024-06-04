@@ -40,6 +40,9 @@ def inputMove(game: Game): IO[Position] =
       .map(i => IO(availableMoves(i - 1)))
       .getOrElse:
         for
+          _ <- out:
+            // move up one line, clear whole line
+            Seq.fill(availableMoves.size + 3)(s"\u001b[1A\u001b[2K").mkString
           _ <- out("Bad input, try again...")
           move <- inputMove(game)
         yield move
